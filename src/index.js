@@ -38,14 +38,14 @@ const renderInCard = function(toy){
   img.setAttribute("class", "toy-avatar")
   
   const p = document.createElement("p")
-  p.innerText = `${toy.likes} Likes` //comeback w post fetch
-
+  p.innerText = `${toy.likes} Likes` 
   const button = document.createElement("button")
   button.classList.add("like-btn")
   button.id =[toy.id]
   button.innerText = "Like"
   button.addEventListener("click", (e) => {
-    console.log("hello", e.target.likes) //comes w post fetch
+    console.log(e.target.dataset);
+    updateLikes(e)
   })
 
   let div = document.createElement("div")
@@ -90,9 +90,11 @@ function postData(postToy){
 })
 }
 
-function updateLikes(event) {
-  event.preventDefault();
-  fetch("http://localhost:3000/toys/:id", {
+function updateLikes(e) {
+  e.preventDefault();
+  let more = parseInt(e.target.previousElementSibling.innerText) + 1
+  
+  fetch(`http://localhost:3000/toys/${e.target.id}`, {
   method: "PATCH",
   headers:{
     "Content-type": "application/json",
@@ -102,5 +104,8 @@ function updateLikes(event) {
     "likes": more
   })
  })
-.then(resp => console.log(resp.json()))
+.then(resp =>resp.json())
+.then(like_obj=>{
+  e.target.previousElementSibling.innerText = `${more} likes`
+})
 }
